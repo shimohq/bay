@@ -4,6 +4,10 @@ class App extends Application {
   constructor() {
     super();
 
+    this.router.get('/match/:id', function* () {
+      console.log('here');
+    });
+
     this.router.get('/match/:id', ['auth:editor'], 'users#show');
 
     this.router.resource('posts', router => {

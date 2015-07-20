@@ -1,6 +1,16 @@
-export * from './class/tang_application';
-export * from './class/tang_controller';
-export * from './class/tang_sequelize_model';
+export * from './lib/application';
+export * from './lib/controller';
+import http from 'http';
 
 class Bay {
+  constructor(App) {
+    const app = new App();
+    this.server = http.createServer(app.callback());
+  }
+
+  listen(port) {
+    this.server.listen(port);
+  }
 }
+
+export default Bay;
