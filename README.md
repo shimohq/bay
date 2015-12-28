@@ -1,2 +1,2 @@
-# bay
+# Bay
 The framework

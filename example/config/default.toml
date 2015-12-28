@@ -1,9 +1,0 @@
-[site]
-port = 4003
-
-[database]
-dialect = "mysql"
-name    = "tang"
-user    = "root"
-pass    = ""
-log     = false

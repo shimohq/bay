@@ -1,23 +1,31 @@
-import fs from 'fs';
-import path from 'path';
-import inflection from 'inflection';
+'use strict';
 
-export let controllers = function (dir) {
-  let controllers = new Map();
+const resolver = require('resolve-keypath').resolver;
+const path = require('path');
 
-  fs.readdirSync(dir).forEach(filename => {
-    filename = path.basename(filename, '.js');
-    let end = '_controller';
-    if (!filename.endsWith(end)) {
-      return;
+module.exports = function (base) {
+  const controllers = require('require-dir')(path.join(base, 'controllers'), { recurse: true });
+  const controllerResolver = resolver(controllers, '/');
+
+  const versions = require('require-dir')(path.join(base, 'versions'), { recurse: true });
+  const versionResolver = resolver(versions, '/');
+
+  return function (key, version) {
+    if (typeof key === 'function') {
+      return key;
     }
+    key = key.split('#');
 
-    let m = require(path.join(dir, filename));
-    let controller = m[inflection.camelize(filename)];
-    controller.init();
-    let name = filename.replace(new RegExp(`${end}$`), '');
-    controllers.set(name, controller);
-  });
+    const controllerName = key[0];
+    const ControllerClass = controllerResolver(controllerName);
+    if (!ControllerClass) {
+      throw new Error(`Controller not found: ${controllerName}`);
+    }
+    const actionName = key[1];
 
-  return controllers;
+    const VersionTransformer = versionResolver(`${version}/${controllerName}`);
+
+    const ret = { ControllerClass, actionName, middlewares: [], VersionTransformer };
+    return ret;
+  };
 };
