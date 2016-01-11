@@ -159,7 +159,7 @@ class BayApplication {
     // respond
     const code = statuses[err.status];
     const msg = err.expose ? err.message : code;
-    res.statusCode = code;
+    res.statusCode = err.status;
     res.setHeader('Content-Length', Buffer.byteLength(msg));
     res.end(msg);
   }
