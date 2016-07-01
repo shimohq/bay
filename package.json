@@ -1,6 +1,6 @@
 {
   "name": "bay",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "The framework",
   "main": "index.js",
   "directories": {
