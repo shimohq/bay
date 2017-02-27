@@ -35,9 +35,9 @@ class BayApplication {
 
     this.router = new Router();
 
-    this.getController = resolver(requireDir(path.join(this.base, 'controllers'), { recurse: true }), '/');
+    this.getController = resolver(options.controllers || requireDir(path.join(this.base, 'controllers'), { recurse: true }), '/');
     if (this.getVersion) {
-      this.getVersionTransformer = resolver(requireDir(path.join(this.base, 'versions'), { recurse: true }), '/');
+      this.getVersionTransformer = resolver(options.versions || requireDir(path.join(this.base, 'versions'), { recurse: true }), '/');
     }
   }
 
