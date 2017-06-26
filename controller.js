@@ -91,11 +91,11 @@ BayController.prototype.assert = function (res, code, message) {
  * @api public
  */
 
-BayController.prototype.throw = function (code, message) {
+BayController.prototype.throw = function (code, message, props) {
   if (arguments.length === 1 && typeof code === 'string') {
-    throw createError(400, code);
+    throw createError(400, code, props);
   }
-  throw createError(code, message);
+  throw createError(code, message, props);
 };
 
 /**
