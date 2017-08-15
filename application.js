@@ -137,7 +137,7 @@ class BayApplication {
   }
 
   handleError(req, res, err) {
-    if (res.headerSent || !res.socket || !res.socket.writable) {
+    if (res.headersSent || !res.socket || !res.socket.writable) {
       err.headerSent = true;
       return;
     }
