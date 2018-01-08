@@ -1,6 +1,5 @@
 'use strict';
 
-const co = require('co');
 const _ = require('lodash');
 const http = require('http');
 const compose = require('./lib/compose');
