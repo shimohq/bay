@@ -124,7 +124,7 @@ class BayApplication {
         let body
 
         if (typeof fn === 'function') {
-          body = yield fn()
+          body = yield fn.call(this)
         }
 
         if (typeof body !== 'undefined') {
