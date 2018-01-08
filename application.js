@@ -3,7 +3,7 @@
 const co = require('co');
 const _ = require('lodash');
 const http = require('http');
-const compose = require('koa-compose');
+const compose = require('./lib/compose');
 const filter = require('filter-match').filter;
 const Router = require('./lib/router/router');
 const resolver = require('resolve-keypath').resolver;
@@ -121,18 +121,23 @@ class BayApplication {
       }
 
       middlewares.push(function *fillRespondBody(next) {
-        const body = yield controller[actionName];
+        const fn = controller[actionName];
+        let body
+
+        if (typeof fn === 'function') {
+          body = yield fn()
+        }
+
         if (typeof body !== 'undefined') {
           controller.body = body;
         }
         yield next;
       });
 
-      co.wrap(compose(middlewares)).call(controller).then(function () {
-        controller.respond();
-      }).catch(function (err) {
-        self.handleError(req, res, convertToError(err));
-      });
+      // Make Bay work with async function
+      compose(middlewares)(controller)
+        .then(function () { controller.respond() })
+        .catch(function (err) { self.handleError(req, res, convertToError(err)) });
     };
   }
 
