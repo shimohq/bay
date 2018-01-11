@@ -20,7 +20,7 @@ const app = new Application({
 });
 
 while (n--) {
-  app.use(next => next());
+  app.use(function * (next) { yield next });
 }
 
 app.listen(3000);
