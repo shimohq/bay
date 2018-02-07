@@ -2,7 +2,7 @@
   "name": "bay",
   "version": "0.5.2",
   "description": "The framework",
-  "main": "index.js",
+  "main": "application.js",
   "directories": {
     "example": "example"
   },
