@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const http = require('http');
-const compose = require('./lib/compose');
+const compose = require('bay-compose');
 const filter = require('filter-match').filter;
 const Router = require('./lib/router/router');
 const resolver = require('resolve-keypath').resolver;
