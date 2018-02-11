@@ -124,7 +124,14 @@ class BayApplication {
         let body
 
         if (typeof fn === 'function') {
-          body = yield fn.call(this)
+          const ret = fn.call(this);
+
+          // function, promise, generator, array, or object
+          if (ret != null && (typeof ret === 'object' || typeof ret === 'function')) {
+            body = yield ret;
+          } else {
+            body = ret;
+          }
         }
 
         if (typeof body !== 'undefined') {
