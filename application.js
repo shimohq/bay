@@ -75,7 +75,12 @@ class BayApplication {
       res.statusCode = 404;
 
       // Find the matching route
-      const match = self.router.match(parse(req).pathname, req.method);
+      let match
+      try {
+        match = self.router.match(parse(req).pathname, req.method);
+      } catch (err) {
+        return self.handleError(req, res, err);
+      }
       if (!match) {
         return self.handleError(req, res, new exceptions.RoutingError('No route matches'));
       }
