@@ -14,6 +14,8 @@ const statuses = require('statuses');
 
 const path = require('path');
 
+const PATH_SEPARATOR = '/'
+
 class BayApplication {
   constructor(options) {
     if (!options) {
@@ -27,6 +29,7 @@ class BayApplication {
     this.getVersion = options.getVersion;
     this.proxy = options.proxy;
     this.base = options.base;
+    this.specifiedControllers = options.controllers
 
     if (!this.base) {
       throw new Error('missing base path');
@@ -34,10 +37,38 @@ class BayApplication {
 
     this.router = new Router();
 
-    this.getController = resolver(options.controllers || requireDir(path.join(this.base, 'controllers'), { recurse: true }), '/');
+    this.getController = resolver(options.controllers || requireDir(path.join(this.base, 'controllers'), { recurse: true }), PATH_SEPARATOR);
     if (this.getVersion) {
-      this.getVersionTransformer = resolver(options.versions || requireDir(path.join(this.base, 'versions'), { recurse: true }), '/');
+      this.getVersionTransformer = resolver(options.versions || requireDir(path.join(this.base, 'versions'), { recurse: true }), PATH_SEPARATOR);
     }
+  }
+
+  getController (controllerName) {
+    if (!this._controllerResolver) {
+      this._controllerResolver = resolver(this.specifiedControllers, PATH_SEPARATOR)
+    }
+    return this._controllerResolver(controllerName);
+  }
+
+  /**
+   * Load all controllers from disk
+   *
+   * @returns
+   * @private
+   * @memberof BayApplication
+   */
+  _requireControllers () {
+    const ret = {}
+    this.router.getControllers().forEach((controllerName) => {
+      const pathParts = controllerName.split(PATH_SEPARATOR);
+      try {
+        const subPath = path.join.apply(path, pathParts);
+        const requiredModule = require(path.join(this.base, 'controllers', subPath))
+        _.set(ret, pathParts, requiredModule)
+      } catch (e) {}
+    })
+
+    return ret
   }
 
   /**
@@ -53,6 +84,12 @@ class BayApplication {
   }
 
   listen() {
+    if (!this.specifiedControllers) {
+      // Lazy loading all controllers before processing any
+      // HTTP requests. That introduces an limitation that all
+      // routes defined after `#listen()` will be ignored.
+      this.specifiedControllers = this._requireControllers();
+    }
     const server = http.createServer(this.callback());
     return server.listen.apply(server, arguments);
   }
