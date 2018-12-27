@@ -7,7 +7,7 @@
     "example": "example"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "bench": "make -C benchmarks"
   },
   "author": "",
@@ -40,5 +40,9 @@
     "statuses": "^1.2.1",
     "type-is": "^1.6.10",
     "vary": "^1.1.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
   }
 }
