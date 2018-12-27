@@ -1,6 +1,6 @@
 'use strict';
 
-const _ = require('lodash');
+const _ = require('./lib/lodash');
 const http = require('http');
 const compose = require('bay-compose');
 const filter = require('filter-match').filter;
