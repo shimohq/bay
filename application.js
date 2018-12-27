@@ -44,9 +44,19 @@ class BayApplication {
 
   getController (controllerName) {
     if (!this._controllerResolver) {
+      this.initControllers()
       this._controllerResolver = resolver(this.specifiedControllers, PATH_SEPARATOR)
     }
     return this._controllerResolver(controllerName);
+  }
+
+  initControllers () {
+    if (!this.specifiedControllers) {
+      // Lazy loading all controllers before processing any
+      // HTTP requests. That introduces an limitation that all
+      // routes defined after `#listen()` will be ignored.
+      this.specifiedControllers = this._requireControllers();
+    }
   }
 
   /**
@@ -83,12 +93,7 @@ class BayApplication {
   }
 
   listen() {
-    if (!this.specifiedControllers) {
-      // Lazy loading all controllers before processing any
-      // HTTP requests. That introduces an limitation that all
-      // routes defined after `#listen()` will be ignored.
-      this.specifiedControllers = this._requireControllers();
-    }
+    this.initControllers();
     const server = http.createServer(this.callback());
     return server.listen.apply(server, arguments);
   }
