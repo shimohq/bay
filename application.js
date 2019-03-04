@@ -70,11 +70,9 @@ class BayApplication {
     const ret = {}
     this.router.getControllers().forEach((controllerName) => {
       const pathParts = controllerName.split(PATH_SEPARATOR);
-      try {
-        const subPath = path.join.apply(path, pathParts);
-        const requiredModule = require(path.join(this.base, 'controllers', subPath))
-        _.set(ret, pathParts, requiredModule)
-      } catch (e) {}
+      const subPath = path.join.apply(path, pathParts);
+      const requiredModule = require(path.join(this.base, 'controllers', subPath))
+      _.set(ret, pathParts, requiredModule)
     })
 
     return ret
